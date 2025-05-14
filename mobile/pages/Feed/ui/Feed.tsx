@@ -11,6 +11,7 @@ const Feed = () => {
     data: postsData,
     isLoading,
     isFetching,
+    isError,
     error,
   } = useGetPostsQuery({ offset, count });
 
@@ -28,8 +29,8 @@ const Feed = () => {
     );
   }
 
-  if (error) {
-    console.log(error)
+  if (isError) {
+    console.log(error);
     return (
 
       <View style={styles.center}>
@@ -37,28 +38,28 @@ const Feed = () => {
       </View>
     );
   }
-
-  const posts = postsData?.items.map((item: any[]) => item[0]) || [];
+  console.log(postsData.data);
 
   const renderItem = ({ item }: { item: any }) => (
     <View style={styles.postContainer}>
       <View style={styles.postHeader}>
-        <Image
+        {item.user.photo.xs ? <Image
           source={{ uri: item.user.photo.xs }}
           style={styles.avatar}
-        />
+        /> : null 
+        }
         <Text style={styles.userName}>
           {item.user.firstName} {item.user.lastName}
         </Text>
       </View>
       <Text style={styles.postText}>{item.message}</Text>
-      {item.photos?.length > 0 && (
+      {/* {item.photos?.length > 0 && (
         <Image
           source={{ uri: item.photos[0].photo.xs.src }}
           style={styles.postImage}
           resizeMode="cover"
         />
-      )}
+      )} */}
       <View style={styles.postStats}>
         <Text style={styles.statItem}>❤️ {item.likes.count}</Text>
         <Text style={styles.statItem}>💬 {item.comments.count}</Text>
@@ -70,7 +71,7 @@ const Feed = () => {
 
   return (
     <FlashList
-      data={posts}
+      data={postsData?.data?.items}
       renderItem={renderItem}
       keyExtractor={(item) => item.id.toString()}
       estimatedItemSize={200}

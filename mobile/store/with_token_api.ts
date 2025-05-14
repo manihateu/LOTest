@@ -9,9 +9,10 @@ function getToken() {
 export const WithTokenApi = createApi({
   reducerPath: 'authorizeApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'https://https://api.lo.ink/v1',
+    baseUrl: 'https://api.lo.ink/v1',
     prepareHeaders: (headers) => {
       const token = getToken();
+      console.log(token);
       if (token) {
         headers.set('Authorization', `Bearer ${token}`);
       }
