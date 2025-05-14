@@ -4,16 +4,15 @@ const feedApi = WithTokenApi.injectEndpoints({
     endpoints: (builder) => ({
         getPosts: builder.query<any, { offset: number; count: number; sort?: number, space?: number, content?: any }>({
             query: ({ offset, count, sort = 0, space = null, content = null }) => ({
-                url: 'posts/feed',
-                params: { offset, count, sort, space, content },
+                url: `posts/feed?cursor=${offset}&count=${count}`,
             }),
             serializeQueryArgs: ({ endpointName }) => {
                 return endpointName;
             },
             merge: (currentCache, newItems) => {
-                if (newItems.items) {
-                currentCache.items.push(...newItems.items);
-                currentCache.count = newItems.count;
+                if (newItems.data.items) {
+                    currentCache.data.items.push(...newItems.data.items);
+                    currentCache.data.count = newItems.data.count;
                 }
             },
             forceRefetch({ currentArg, previousArg }) {
