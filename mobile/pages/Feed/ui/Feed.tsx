@@ -1,25 +1,33 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
-import { useGetPostsQuery } from '../lib/api';
+import { useLazyGetPostsQuery } from '../lib/api';
 
 const Feed = () => {
   const [offset, setOffset] = React.useState(0);
   const count = 20;
 
-  const {
-    data: postsData,
-    isLoading,
-    isFetching,
-    isError,
-    error,
-  } = useGetPostsQuery({ offset, count });
+  const [trigger, {isFetching, data: postsData, isLoading, isError, error}] = useLazyGetPostsQuery();
+
+  useEffect(() => {
+    const update = async () => {
+        try {
+            await trigger({ offset, count });
+        } catch (error) {
+            console.log(error)
+        }
+    };
+    update();
+  }, [offset, trigger]);
 
   const loadMore = () => {
-    if (!isFetching && postsData && offset + count < postsData.count) {
+    console.log("trigger")
+    if (!isFetching && postsData && offset + count < postsData.data.count) {
       setOffset(offset + count);
     }
   };
+
+  console.log(offset)
 
   if (isLoading && offset === 0) {
     return (
@@ -38,16 +46,12 @@ const Feed = () => {
       </View>
     );
   }
-  console.log(postsData.data);
+  console.log(postsData);
 
   const renderItem = ({ item }: { item: any }) => (
     <View style={styles.postContainer}>
       <View style={styles.postHeader}>
-        {item.user.photo.xs ? <Image
-          source={{ uri: item.user.photo.xs }}
-          style={styles.avatar}
-        /> : null 
-        }
+
         <Text style={styles.userName}>
           {item.user.firstName} {item.user.lastName}
         </Text>
@@ -71,7 +75,7 @@ const Feed = () => {
 
   return (
     <FlashList
-      data={postsData?.data?.items}
+      data={postsData?.data.items}
       renderItem={renderItem}
       keyExtractor={(item) => item.id.toString()}
       estimatedItemSize={200}

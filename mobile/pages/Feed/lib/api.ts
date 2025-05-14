@@ -23,4 +23,4 @@ const feedApi = WithTokenApi.injectEndpoints({
     }),
 });
 
-export const { useGetPostsQuery } = feedApi;
+export const { useLazyGetPostsQuery } = feedApi;
