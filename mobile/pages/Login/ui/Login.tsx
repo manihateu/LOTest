@@ -12,9 +12,10 @@ export const Login = () => {
 
     const loginTrigger = async () => {
         try {
-            const res = await login({token}).unwrap();
-            storage.set('x-token-access', res.access_token);
-            storage.set('X-token-refresh', res.refresh_token);
+            const {data} = await login({token}).unwrap();
+            console.log(data);
+            storage.set('x-token-access', data.access_token);
+            storage.set('X-token-refresh', data.refresh_token);
             dispatch(setAuth());
         } catch (error) {
             console.error(error);

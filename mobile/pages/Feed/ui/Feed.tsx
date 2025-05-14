@@ -29,7 +29,9 @@ const Feed = () => {
   }
 
   if (error) {
+    console.log(error)
     return (
+
       <View style={styles.center}>
         <Text>Ошибка при загрузке постов</Text>
       </View>
